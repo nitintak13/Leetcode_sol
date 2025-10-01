@@ -8,12 +8,8 @@ public:
         while (j < n) {
             ch[s[j] - 'A']++;
             maxi = max(maxi, ch[s[j] - 'A']);
-            while (j - i + 1 - maxi > t) {
+            if (j - i + 1 - maxi > t) {
                 ch[s[i] - 'A']--;
-                maxi = 0;
-                for (int k = 0; k < 26; k++) {
-                    maxi = max(maxi, ch[k]);
-                }
                 i++;
             }
             ans = max(ans, j - i + 1);
