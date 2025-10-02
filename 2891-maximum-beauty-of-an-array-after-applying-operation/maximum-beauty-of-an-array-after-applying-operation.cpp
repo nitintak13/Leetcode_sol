@@ -2,22 +2,18 @@ class Solution {
 public:
     int maximumBeauty(vector<int>& nums, int k) {
         int n = nums.size();
-        vector<pair<int, int>> v;
-        for (int i = 0; i < n; i++) {
-            v.push_back({nums[i] - k, nums[i] + k});
-        }
-        sort(v.begin(), v.end());
-        deque<int> dq;
+        sort(nums.begin(), nums.end());
+        int i = 0, j = 0;
         int res = 0;
-        for (auto it : v) {
-            while (!dq.empty() && dq.front() < it.first) {
-                dq.pop_front();
+        while (j < n) {
+            if (nums[j] <= (nums[i] + 2 * k)) {
+                j++;
+            } else {
+                res = max(res, j - i);
+                i++;
             }
-
-            dq.push_back(it.second);
-            int p = dq.size();
-            res = max(res, p);
         }
+        res = max(res, j - i);
         return res;
     }
 };
