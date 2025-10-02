@@ -7,14 +7,14 @@ public:
             v.push_back({nums[i] - k, nums[i] + k});
         }
         sort(v.begin(), v.end());
-        deque<pair<int, int>> dq;
+        deque<int> dq;
         int res = 0;
         for (auto it : v) {
-            while (!dq.empty() && dq.front().second < it.first) {
+            while (!dq.empty() && dq.front() < it.first) {
                 dq.pop_front();
             }
 
-            dq.push_back(it);
+            dq.push_back(it.second);
             int p = dq.size();
             res = max(res, p);
         }
