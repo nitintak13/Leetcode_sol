@@ -13,13 +13,13 @@ public:
             if (v[j] >= k) {
                 ans = min(ans, j + 1);
             }
+            while (!dq.empty() && v[dq.back()] >= v[j]) {
+                dq.pop_back();
+            }
 
             while (!dq.empty() && v[j] - v[dq.front()] >= k) {
                 ans = min(ans, j - dq.front());
                 dq.pop_front();
-            }
-            while (!dq.empty() && v[dq.back()] >= v[j]) {
-                dq.pop_back();
             }
 
             dq.push_back(j);
