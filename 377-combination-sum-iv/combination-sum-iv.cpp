@@ -1,32 +1,21 @@
 class Solution {
 public:
-    int dp[201][1001];
-    int fun(int ind, int k, vector<int>& nums, int sum) {
-        int n = nums.size();
-
-        if (ind >= n) {
-            if (sum == k) {
-                return 1;
-            }
-            return 0;
+    int f(int t, vector<int>& dp, vector<int>& n) {
+        if (t == 0)
+            return 1;
+        if (dp[t] != -1)
+            return dp[t];
+        int ans = 0;
+        for (int i = 0; i < n.size(); i++) {
+            if (t - n[i] < 0)
+                break;
+            ans = ans + f(t - n[i], dp, n);
         }
-        if (sum > k) {
-            return 0;
-        }
-        if (dp[ind][sum] != -1)
-            return dp[ind][sum];
-        int left = 0, right = 0;
-
-        if (sum + nums[ind] <= k)
-            left += fun(0, k, nums, sum + nums[ind]);
-        right += fun(ind + 1, k, nums, sum);
-
-        return dp[ind][sum] = left + right;
+        return dp[t] = ans;
     }
-
-    int combinationSum4(vector<int>& arr, int k) {
-        int n = arr.size();
-        memset(dp, -1, sizeof(dp));
-        return fun(0, k, arr, 0);
+    int combinationSum4(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        vector<int> dp(1001, -1);
+        return f(target, dp, nums);
     }
 };
