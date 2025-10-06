@@ -6,7 +6,7 @@ public:
             ans.push_back(v);
             return;
         }
-        if (v.size() > k || t < 0)
+        if (v.size() > k)
             return;
         for (int i = idx; i < arr.size(); i++) {
             if (t >= arr[i]) {
