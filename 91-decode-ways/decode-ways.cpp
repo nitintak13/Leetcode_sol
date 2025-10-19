@@ -8,7 +8,7 @@ public:
             return dp[i];
         string p = "";
         int val = 0;
-        for (int j = i; j < n; j++) {
+        for (int j = i; j < min(i + 2, n); j++) {
             p += s[j];
             if (stoi(p) <= 0 || stoi(p) > 26)
                 break;
