@@ -8,12 +8,12 @@ public:
         if (idx == size) {
             int ni = i;
             int nj = j;
-            // next cell must be out-of-bounds OR '#'
+           
             if (ni >= 0 && ni < n && nj >= 0 && nj < m) {
-                if (b[ni][nj] != '#') // if inside and not a wall
-                    return 0;         // invalid
+                if (b[ni][nj] != '#') 
+                    return 0;         
             }
-            return 1; // valid placement end
+            return 1; 
         }
 
         if (b[i][j] == ' ' or b[i][j] == word[idx]) {
