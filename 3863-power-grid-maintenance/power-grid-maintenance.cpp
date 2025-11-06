@@ -1,70 +1,75 @@
-class Solution {
+#include <queue>
+#include <unordered_map>
+#include <vector>
+
+using namespace std;
+
+class DSU {
 public:
-    unordered_map<int, set<int>> mp;
-    void dfs(int node, vector<vector<int>>& adj, vector<int>& visited, int id,
-             vector<int>& ids) {
-        visited[node] = 1;
-        ids[node] = id;
-        mp[id].insert(node);
-        for (auto nodes : adj[node]) {
-            if (!visited[nodes]) {
-                dfs(nodes, adj, visited, id, ids);
-            }
-        }
+    vector<int> parent;
+
+    DSU(int n) {
+        parent.resize(n + 1);
+        for (int i = 0; i <= n; ++i)
+            parent[i] = i;
     }
 
-    vector<int> processQueries(int c, vector<vector<int>>& connections,
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]); // path compression
+        return parent[x];
+    }
+
+    bool unite(int x, int y) {
+        int px = find(x), py = find(y);
+        if (px == py)
+            return false;
+        parent[py] = px;
+        return true;
+    }
+};
+
+class Solution {
+public:
+    vector<int> processQueries(int n, vector<vector<int>>& connections,
                                vector<vector<int>>& queries) {
-        vector<int> visited(c + 1, 0);
+        DSU dsu(n);
+        vector<bool> online(n + 1, true);
 
-        vector<vector<int>> adj(c + 1);
-
-        for (int i = 0; i < connections.size(); i++) {
-            int u = connections[i][0];
-            int v = connections[i][1];
-
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+        for (auto& conn : connections) {
+            int u = conn[0], v = conn[1];
+            dsu.unite(u, v);
         }
 
-        vector<int> ids(c + 1);
-
-        for (int i = 1; i <= c; i++) {
-            if (!visited[i]) {
-                dfs(i, adj, visited, i, ids);
-            }
+        unordered_map<int, priority_queue<int, vector<int>, greater<int>>>
+            component_heap;
+        for (int station = 1; station <= n; ++station) {
+            int root = dsu.find(station);
+            component_heap[root].push(station);
         }
 
-        // for (int i = 1; i <= c; i++) {
-        //     cout << ids[i] << " ";
-        // }
-        // cout << endl;
+        vector<int> result;
 
-        vector<int> ans;
-        for (int i = 0; i < queries.size(); i++) {
-            if (queries[i][0] == 1) {
-
-                int node = queries[i][1];
-
-                int check_id = ids[node];
-                if (mp[check_id].count(node)) {
-                    ans.push_back(node);
-                } else if (mp[check_id].size() != 0) {
-                    ans.push_back(*(mp[check_id].begin()));
-                } else
-                    ans.push_back(-1);
+        for (auto& query : queries) {
+            int type = query[0], x = query[1];
+            if (type == 2) {
+                online[x] = false;
             } else {
+                if (online[x]) {
+                    result.push_back(x);
+                } else {
+                    int root = dsu.find(x);
+                    auto& heap = component_heap[root];
 
-                int node = queries[i][1];
+                    while (!heap.empty() && !online[heap.top()]) {
+                        heap.pop();
+                    }
 
-                int check_id = ids[node];
-
-                if (mp[check_id].count(node)) {
-                    mp[check_id].erase(node);
+                    result.push_back(heap.empty() ? -1 : heap.top());
                 }
             }
         }
 
-        return ans;
+        return result;
     }
 };
