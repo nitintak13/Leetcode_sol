@@ -2,21 +2,25 @@ class Solution {
 public:
     bool hasAllCodes(string s, int k) {
         int n = s.size();
-        int i = 0, j = 0;
-        unordered_map<string, int> mp;
+        if (n < k) return false;
+
+        unordered_set<string> st;
         string f = "";
-        while (j < n) {
+
+        for (int j = 0; j < n; j++) {
             f += s[j];
 
-            if (j - i >= k) {
+            // keep window size = k
+            if (f.size() > k) {
                 f.erase(0, 1);
-                i++;
             }
+
+            // when window size is exactly k
             if (f.size() == k) {
-                mp[f]++;
+                st.insert(f);
             }
-            j++;
         }
-        return pow(2, k) == mp.size();
+
+        return st.size() == (1 << k);
     }
 };
