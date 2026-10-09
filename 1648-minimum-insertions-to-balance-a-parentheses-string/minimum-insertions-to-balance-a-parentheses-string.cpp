@@ -1,43 +1,34 @@
+
 class Solution {
 public:
     int minInsertions(string s) {
-        stack<int> st;
-        int i = s.size() - 1, ans = 0;
-        while (i >= 0) {
-            if (s[i] == ')') {
-                st.push(i);
+        int ans = 0;
+        int open = 0;
+
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == '(') {
+                open++;
             } else {
-                if (st.empty()) {
-                    ans += 2;
-                    i--;
-                    continue;
-                }
-                int sf = st.top();
-                st.pop();
-                if (st.empty()) {
-                    ans += 1;
-                    i--;
-                    continue;
-                }
-                int sf2 = st.top();
-                st.pop();
-                if (abs(sf2 - sf) != 1) {
+                // Need a pair of consecutive ')'.
+                if (i + 1 < s.size() && s[i + 1] == ')') {
+                    i++;
+                } else {
+                    // Insert the missing ')'.
                     ans++;
-                    st.push(sf2);
+                }
+
+                if (open > 0) {
+                    open--;
+                } else {
+                    // Insert '(' to match this closing pair.
+                    ans++;
                 }
             }
-            i--;
         }
-        while (!st.empty()) {
-            int it = st.top();
-            st.pop();
-            if (!st.empty() && abs(it - st.top()) == 1) {
-                st.pop();
-                ans++;
-            } else {
-                ans += 2;
-            }
-        }
+
+        // Each unmatched '(' requires two ')'.
+        ans += 2 * open;
+
         return ans;
     }
 };
