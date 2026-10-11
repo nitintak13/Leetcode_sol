@@ -1,29 +1,27 @@
 class Solution {
 public:
     long long maximumSubarraySum(vector<int>& nums, int k) {
-        int n = nums.size();
         long long ans = LLONG_MIN;
-        vector<long long> pre(n + 1, 0LL);
-        pre[0] = nums[0];
-
-        unordered_map<long long, long long> mp;
-        for (int i = 1; i < n; i++) {
-            pre[i] = pre[i - 1] + nums[i];
+        int n = nums.size();
+        vector<long long> prefix(n + 1, 0);
+        prefix[0] = 0;
+        for (int i = 0; i < n; i++) {
+            prefix[i + 1] += prefix[i] + nums[i];
         }
-        mp[nums[0]] = 0;
-        for (int i = 1; i < n; i++) {
-            int num1 = nums[i] + k;
-            int num2 = nums[i] - k;
-            if (mp.find(num1) != mp.end()) {
-                ans = max(ans, pre[i] - mp[num1]);
+        unordered_map<int, int> mp;
+        for (int i = 0; i < n; i++) {
+            if (mp.find(nums[i] - k) != mp.end()) {
+                ans = max(ans, prefix[i + 1] - prefix[mp[nums[i] - k]]);
             }
-            if (mp.find(num2) != mp.end()) {
-                ans = max(ans, pre[i] - mp[num2]);
+            if (mp.find(nums[i] + k) != mp.end()) {
+                ans = max(ans, prefix[i + 1] - prefix[mp[nums[i] + k]]);
             }
             if (mp.find(nums[i]) == mp.end()) {
-                mp[nums[i]] = pre[i - 1];
+                mp[nums[i]] = i;
             } else {
-                mp[nums[i]] = min(mp[nums[i]], pre[i - 1]);
+                if (prefix[i] - prefix[mp[nums[i]]] < 0) {
+                    mp[nums[i]] = i;
+                }
             }
         }
         return ans == LLONG_MIN ? 0 : ans;
